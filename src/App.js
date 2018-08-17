@@ -1,11 +1,17 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import './App.css'
+
+import axios from 'axios'
 
 class App extends Component {
 
 
+  state = {
+    venues: []
+  }
+
   componentDidMount() {
+    this.getVenues()
     this.renderMap()
   }
 
@@ -14,6 +20,27 @@ class App extends Component {
     window.initMap = this.initMap
   }
 
+  getVenues = () => {
+    const endPoint = "https://api.foursquare.com/v2/venues/explore?"
+    const parameters = {
+      client_id: "PMHC2WA1VCBHVYOPPSJ0QSBYTLRF4PNJ04OWVWV0PZJ0QFIR",
+      client_secret: "CULSZZ44YAEBOWBFGPB4BF5ISRXXSNYR0EE3JV3CNE2ZWHV0",
+      query: "food",
+      near: "Sydney",
+      v: "20182507"
+    }
+
+    axios.get(endPoint + new URLSearchParams(parameters))
+      .then(response => {
+        this.setState({
+          venues: response.data.response.groups[0].items
+        })
+      })
+      .catch(error => {
+        console.log("ERROR!! " + error)
+      })
+
+  }
 
   initMap = () => {
     var map = new window.google.maps.Map(document.getElementById('map'), {
